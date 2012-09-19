@@ -30,6 +30,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
 import android.view.IWindowManager;
 import android.view.WindowManagerGlobal;
@@ -45,6 +46,8 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
     private static final String KEY_BATTERY_LIGHT = "battery_light";
     private static final String KEY_HARDWARE_KEYS = "hardware_keys";
     private static final String KEY_NAVIGATION_BAR = "navigation_bar";
+    private static final String KEY_NAV_BUTTONS_EDIT = "nav_buttons_edit";
+    private static final String KEY_NAV_BUTTONS_HEIGHT = "nav_buttons_height";
     private static final String KEY_NAVIGATION_RING = "navigation_ring";
     private static final String KEY_NAVIGATION_BAR_CATEGORY = "navigation_bar_category";
     private static final String KEY_LOCK_CLOCK = "lock_clock";
@@ -63,6 +66,7 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 
     private PreferenceScreen mNotificationPulse;
     private PreferenceScreen mBatteryPulse;
+    private ListPreference mNavButtonsHeight;
     private PreferenceScreen mPieControl;
     private ListPreference mExpandedDesktopPref;
     private CheckBoxPreference mExpandedDesktopNoNavbarPref;
@@ -175,6 +179,14 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
         // Don't display the lock clock preference if its not installed
         removePreferenceIfPackageNotInstalled(findPreference(KEY_LOCK_CLOCK));
 
+        mNavButtonsHeight = (ListPreference) findPreference(KEY_NAV_BUTTONS_HEIGHT);
+        mNavButtonsHeight.setOnPreferenceChangeListener(this);
+
+        int statusNavButtonsHeight = Settings.System.getInt(getActivity().getApplicationContext().getContentResolver(),
+                 Settings.System.NAV_BUTTONS_HEIGHT, 48);
+        mNavButtonsHeight.setValue(String.valueOf(statusNavButtonsHeight));
+        mNavButtonsHeight.setSummary(mNavButtonsHeight.getEntry());
+
         mHaloEnabled = (CheckBoxPreference) findPreference(KEY_HALO_ENABLED);
         mHaloEnabled.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
                 Settings.System.HALO_ENABLED, 0) == 1);
@@ -252,6 +264,13 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
             boolean checked = (Boolean) objValue;
                         Settings.System.putInt(getActivity().getContentResolver(),
                                 Settings.System.WE_WANT_POPUPS, checked ? 1 : 0);
+            return true;
+        } else if (preference == mNavButtonsHeight) {
+            int statusNavButtonsHeight = Integer.valueOf((String) objValue);
+            int index = mNavButtonsHeight.findIndexOfValue((String) objValue);
+            Settings.System.putInt(getActivity().getApplicationContext().getContentResolver(),
+                    Settings.System.NAV_BUTTONS_HEIGHT, statusNavButtonsHeight);
+            mNavButtonsHeight.setSummary(mNavButtonsHeight.getEntries()[index]);
             return true;
         }
 
