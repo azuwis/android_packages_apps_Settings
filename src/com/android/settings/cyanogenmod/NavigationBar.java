@@ -41,6 +41,7 @@ public class NavigationBar extends SettingsPreferenceFragment implements OnPrefe
     private static final String NAV_BAR_CATEGORY = "nav_bar_category";
     private static final String NAV_BAR_STATUS = "nav_bar_status";
     private static final String NAV_BAR_EDITOR = "nav_bar_editor";
+    private static final String NAV_BAR_AUTO_TOGGLE = "nav_bar_auto_toggle";
     private static final String NAV_BAR_TABUI_MENU = "nav_bar_tabui_menu";
     private static final String NAV_BAR_COLOR = "nav_bar_color";
     private static final String NAV_BUTTON_COLOR = "nav_bar_button_color";
@@ -48,6 +49,7 @@ public class NavigationBar extends SettingsPreferenceFragment implements OnPrefe
     private static final String NAV_BAR_COLOR_DEF = "nav_bar_color_default";
 
     private CheckBoxPreference mNavigationBarShow;
+    private CheckBoxPreference mNavigationBarAutoToggle;
     private ColorPickerPreference mNavigationBarColor;
     private ColorPickerPreference mNavigationButtonColor;
     private ColorPickerPreference mNavigationGlowColor;
@@ -68,6 +70,8 @@ public class NavigationBar extends SettingsPreferenceFragment implements OnPrefe
         addPreferencesFromResource(R.xml.navigation_bar);
 
         PreferenceScreen prefSet = getPreferenceScreen();
+
+        mNavigationBarAutoToggle = (CheckBoxPreference) prefSet.findPreference(NAV_BAR_AUTO_TOGGLE);
 
         mNavigationBarColor = (ColorPickerPreference) findPreference(NAV_BAR_COLOR);
         mNavigationBarColor.setOnPreferenceChangeListener(this);
@@ -95,6 +99,9 @@ public class NavigationBar extends SettingsPreferenceFragment implements OnPrefe
         } catch (RemoteException ex) {
             // too bad, so sad, oh mom, oh dad
         }
+
+        mNavigationBarAutoToggle.setChecked((Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.NAV_BAR_AUTO_TOGGLE, 0) == 1));
 
         mMenuButtonShow.setChecked((Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.NAV_BAR_TABUI_MENU, 0) == 1));
@@ -170,6 +177,12 @@ public class NavigationBar extends SettingsPreferenceFragment implements OnPrefe
                     Settings.System.NAV_BAR_STATUS, value ? 1 : 0);
             mNavigationBarEditor.setEnabled(value);
             mMenuButtonShow.setEnabled(value);
+            return true;
+        }
+        else if (preference == mNavigationBarAutoToggle) {
+            value = mNavigationBarAutoToggle.isChecked();
+            Settings.System.putInt(getActivity().getApplicationContext().getContentResolver(),
+                    Settings.System.NAV_BAR_AUTO_TOGGLE, value ? 1 : 0);
             return true;
         }
         else if (preference == mMenuButtonShow) {
