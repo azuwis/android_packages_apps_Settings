@@ -3114,6 +3114,11 @@
     <!-- Message of dialog confirming that user wants to protect external storage. [CHAR LIMIT=NONE] -->
     <string name="enforce_read_external_confirm_message" product="nosdcard">When USB storage is protected, apps must request permission to read data from external storage.\n\nSome apps may not work until updated by their developers.</string>
 
+    <!-- Title of checkbox setting that unlock Google Play. [CHAR LIMIT=32] -->
+    <string name="unlock_google_play_title">Unlock Google Play</string>
+    <!-- Summary of checkbox setting that protects external storage. [CHAR LIMIT=64] -->
+    <string name="unlock_google_play_summary">Access paid or restricted apps in Google Play. To make it work, cache of Google Play will be cleared.</string>
+
     <!-- Title of checkbox setting that protects external storage. [CHAR LIMIT=32] -->
     <string name="enforce_read_external_title" product="default">Protect SD card</string>
     <!-- Summary of checkbox setting that protects external storage. [CHAR LIMIT=64] -->

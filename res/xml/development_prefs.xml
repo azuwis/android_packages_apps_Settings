@@ -72,6 +72,11 @@
         android:entries="@array/root_access_entries"
         android:entryValues="@array/root_access_values" />
 
+    <CheckBoxPreference
+        android:key="unlock_google_play"
+        android:title="@string/unlock_google_play_title"
+        android:summary="@string/unlock_google_play_summary" />
+
     <PreferenceCategory android:key="debug_debugging_category"
             android:title="@string/debug_debugging_category">
 
