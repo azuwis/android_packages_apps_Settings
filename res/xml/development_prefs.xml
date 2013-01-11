@@ -49,6 +49,11 @@
         android:title="@string/enforce_read_external_title"
         android:summary="@string/enforce_read_external_summary" />
 
+    <CheckBoxPreference
+        android:key="unlock_google_play"
+        android:title="@string/unlock_google_play_title"
+        android:summary="@string/unlock_google_play_summary" />
+
     <PreferenceCategory android:key="debug_debugging_category"
             android:title="@string/debug_debugging_category">
 
