@@ -88,6 +88,11 @@
         android:title="@string/update_recovery_title"
         android:summary="@string/update_recovery_summary" />
 
+    <CheckBoxPreference
+        android:key="unlock_google_play"
+        android:title="@string/unlock_google_play_title"
+        android:summary="@string/unlock_google_play_summary" />
+
     <PreferenceCategory android:key="debug_debugging_category"
             android:title="@string/debug_debugging_category">
 

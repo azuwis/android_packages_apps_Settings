@@ -19,6 +19,7 @@ package com.android.settings;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -173,6 +174,9 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
 
     private static final String DEVELOPMENT_SHORTCUT_KEY = "development_shortcut";
 
+    private static final String UNLOCK_GOOGLE_PLAY = "unlock_google_play";
+    private static final String GOOGLE_PLAY_PKG_NAME = "com.android.vending";
+
     private static final int RESULT_DEBUG_APP = 1000;
 
     private IWindowManager mWindowManager;
@@ -240,6 +244,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
     private CheckBoxPreference mUpdateRecovery;
 
     private CheckBoxPreference mDevelopmentShortcut;
+
+    private CheckBoxPreference mUnlockGooglePlay;
 
     private final ArrayList<Preference> mAllPrefs = new ArrayList<Preference>();
     private final ArrayList<CheckBoxPreference> mResetCbPrefs
@@ -309,6 +315,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
         mAdvancedReboot = findAndInitCheckboxPref(ADVANCED_REBOOT_KEY);
         mUpdateRecovery = findAndInitCheckboxPref(UPDATE_RECOVERY_KEY);
         mDevelopmentShortcut = findAndInitCheckboxPref(DEVELOPMENT_SHORTCUT_KEY);
+
+        mUnlockGooglePlay = findAndInitCheckboxPref(UNLOCK_GOOGLE_PLAY);
 
         if (!android.os.Process.myUserHandle().equals(UserHandle.OWNER)) {
             disableForUser(mEnableAdb);
@@ -573,6 +581,8 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
                 Settings.Secure.ALLOW_MOCK_SMS, 0) != 0);
         updateCheckBox(mQuickBoot, Settings.Global.getInt(cr,
                 Settings.Global.ENABLE_QUICKBOOT, 0) != 0);
+        updateCheckBox(mUnlockGooglePlay, Settings.System.getInt(cr,
+                Settings.System.UNLOCK_GOOGLE_PLAY, 0) != 0);
         updateRuntimeValue();
         updateHdcpValues();
         updatePasswordSummary();
@@ -1527,6 +1537,14 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
             writeKillAppLongpressBackOptions();
         } else if (preference == mUpdateRecovery) {
             writeUpdateRecoveryOptions();
+        } else if (preference == mUnlockGooglePlay) {
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.UNLOCK_GOOGLE_PLAY,
+                    mUnlockGooglePlay.isChecked() ? 1 : 0);
+            ActivityManager am = (ActivityManager)getActivity().getSystemService(
+                    Context.ACTIVITY_SERVICE);
+            am.forceStopPackage(GOOGLE_PLAY_PKG_NAME);
+            getActivity().getPackageManager().deleteApplicationCacheFiles(GOOGLE_PLAY_PKG_NAME, null);
         } else {
             return super.onPreferenceTreeClick(preferenceScreen, preference);
         }
