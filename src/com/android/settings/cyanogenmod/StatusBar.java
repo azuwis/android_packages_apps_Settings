@@ -39,11 +39,13 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
     private static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
     private static final String STATUS_BAR_BATTERY = "status_bar_battery";
     private static final String STATUS_BAR_SIGNAL = "status_bar_signal";
+    private static final String AUTO_EXPANDED_DESKTOP = "auto_expanded_desktop";
     private static final String STATUS_BAR_CATEGORY_GENERAL = "status_bar_general";
 
     private ListPreference mStatusBarAmPm;
     private ListPreference mStatusBarBattery;
     private ListPreference mStatusBarCmSignal;
+    private CheckBoxPreference mAutoExpandedDesktop;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,10 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
         mStatusBarCmSignal.setSummary(mStatusBarCmSignal.getEntry());
         mStatusBarCmSignal.setOnPreferenceChangeListener(this);
 
+        mAutoExpandedDesktop = (CheckBoxPreference) prefSet.findPreference(AUTO_EXPANDED_DESKTOP);
+        mAutoExpandedDesktop.setChecked((Settings.System.getInt(resolver,
+                Settings.System.AUTO_EXPANDED_DESKTOP, 0) == 1));
+        mAutoExpandedDesktop.setOnPreferenceChangeListener(this);
         PreferenceCategory generalCategory =
                 (PreferenceCategory) findPreference(STATUS_BAR_CATEGORY_GENERAL);
 
@@ -125,6 +131,10 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
             int index = mStatusBarCmSignal.findIndexOfValue((String) newValue);
             Settings.System.putInt(resolver, Settings.System.STATUS_BAR_SIGNAL_TEXT, signalStyle);
             mStatusBarCmSignal.setSummary(mStatusBarCmSignal.getEntries()[index]);
+            return true;
+        } else if (preference == mAutoExpandedDesktop) {
+            boolean value = (Boolean) newValue;
+            Settings.System.putInt(resolver, Settings.System.AUTO_EXPANDED_DESKTOP, value ? 1 : 0);
             return true;
         }
 
