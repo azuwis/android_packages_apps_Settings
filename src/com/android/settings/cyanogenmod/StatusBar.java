@@ -38,6 +38,7 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
     private static final String STATUS_BAR_CLOCK = "status_bar_show_clock";
     private static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
     private static final String STATUS_BAR_SIGNAL = "status_bar_signal";
+    private static final String AUTO_EXPANDED_DESKTOP = "auto_expanded_desktop";
     private static final String STATUS_BAR_NOTIF_COUNT = "status_bar_notif_count";
     private static final String STATUS_BAR_CATEGORY_GENERAL = "status_bar_general";
 
@@ -46,6 +47,7 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
     private ListPreference mStatusBarCmSignal;
     private CheckBoxPreference mStatusBarClock;
     private CheckBoxPreference mStatusBarBrightnessControl;
+    private CheckBoxPreference mAutoExpandedDesktop;
     private CheckBoxPreference mStatusBarNotifCount;
     private PreferenceCategory mPrefCategoryGeneral;
 
@@ -104,6 +106,10 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
         mStatusBarCmSignal.setSummary(mStatusBarCmSignal.getEntry());
         mStatusBarCmSignal.setOnPreferenceChangeListener(this);
 
+        mAutoExpandedDesktop = (CheckBoxPreference) prefSet.findPreference(AUTO_EXPANDED_DESKTOP);
+        mAutoExpandedDesktop.setChecked((Settings.System.getInt(getActivity().getApplicationContext().getContentResolver(),
+                Settings.System.AUTO_EXPANDED_DESKTOP, 0) == 1));
+
         mStatusBarNotifCount = (CheckBoxPreference) prefSet.findPreference(STATUS_BAR_NOTIF_COUNT);
         mStatusBarNotifCount.setChecked((Settings.System.getInt(getActivity().getApplicationContext().getContentResolver(),
                 Settings.System.STATUS_BAR_NOTIF_COUNT, 0) == 1));
@@ -158,6 +164,11 @@ public class StatusBar extends SettingsPreferenceFragment implements OnPreferenc
             value = mStatusBarBrightnessControl.isChecked();
             Settings.System.putInt(getActivity().getApplicationContext().getContentResolver(),
                     Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, value ? 1 : 0);
+            return true;
+        } else if (preference == mAutoExpandedDesktop) {
+            value = mAutoExpandedDesktop.isChecked();
+            Settings.System.putInt(getActivity().getApplicationContext().getContentResolver(),
+                    Settings.System.AUTO_EXPANDED_DESKTOP, value ? 1 : 0);
             return true;
         } else if (preference == mStatusBarNotifCount) {
             value = mStatusBarNotifCount.isChecked();
