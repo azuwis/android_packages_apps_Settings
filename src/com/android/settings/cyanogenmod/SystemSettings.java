@@ -55,6 +55,7 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
     private static final String KEY_PIE_CONTROL = "pie_control";
     private static final String KEY_EXPANDED_DESKTOP = "expanded_desktop";
     private static final String KEY_EXPANDED_DESKTOP_NO_NAVBAR = "expanded_desktop_no_navbar";
+    private static final String KEY_HALO_ENABLED = "halo_enabled";
     private static final String KEY_HALO_STATE = "halo_state";
     private static final String KEY_HALO_HIDE = "halo_hide";
     private static final String KEY_HALO_REVERSED = "halo_reversed"; 
@@ -65,6 +66,7 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
     private PreferenceScreen mPieControl;
     private ListPreference mExpandedDesktopPref;
     private CheckBoxPreference mExpandedDesktopNoNavbarPref;
+    private CheckBoxPreference mHaloEnabled;
     private ListPreference mHaloState;
     private CheckBoxPreference mHaloHide;
     private CheckBoxPreference mHaloReversed; 
@@ -173,6 +175,10 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
         // Don't display the lock clock preference if its not installed
         removePreferenceIfPackageNotInstalled(findPreference(KEY_LOCK_CLOCK));
 
+        mHaloEnabled = (CheckBoxPreference) findPreference(KEY_HALO_ENABLED);
+        mHaloEnabled.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
+                Settings.System.HALO_ENABLED, 0) == 1);
+
         mHaloState = (ListPreference) findPreference(KEY_HALO_STATE);
         mHaloState.setValue(String.valueOf((isHaloPolicyBlack() ? "1" : "0")));
         mHaloState.setOnPreferenceChangeListener(this);
@@ -254,10 +260,15 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 
      @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if  (preference == mHaloHide) {  
+        if  (preference == mHaloEnabled) {  
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.HALO_ENABLED, mHaloEnabled.isChecked()
+                    ? 1 : 0);  
+        } else if  (preference == mHaloHide) {  
             Settings.System.putInt(getActivity().getContentResolver(),
                     Settings.System.HALO_HIDE, mHaloHide.isChecked()
                     ? 1 : 0);  
+
         } else if (preference == mHaloReversed) {  
             Settings.System.putInt(getActivity().getContentResolver(),
                     Settings.System.HALO_REVERSED, mHaloReversed.isChecked()
