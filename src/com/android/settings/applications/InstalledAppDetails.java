@@ -367,6 +367,10 @@ public class InstalledAppDetails extends Fragment
                 mUninstallButton.setText(R.string.uninstall_text);
                 enabled = false;
             } else {
+                boolean specialDisable = false;
+                specialDisable = handleDisableable(mSpecialDisableButton);
+                mSpecialDisableButton.setOnClickListener(this);
+                mMoreControlButtons.setVisibility(specialDisable ? View.VISIBLE : View.GONE);
                 mUninstallButton.setText(R.string.uninstall_text);
             }
         }
