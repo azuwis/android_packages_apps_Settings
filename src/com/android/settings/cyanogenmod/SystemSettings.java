@@ -32,6 +32,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.IWindowManager;
 import android.view.WindowManagerGlobal;
+import android.app.INotificationManager; 
 
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
@@ -54,14 +55,23 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
     private static final String KEY_PIE_CONTROL = "pie_control";
     private static final String KEY_EXPANDED_DESKTOP = "expanded_desktop";
     private static final String KEY_EXPANDED_DESKTOP_NO_NAVBAR = "expanded_desktop_no_navbar";
+	private static final String KEY_HALO_STATE = "halo_state";
+    private static final String KEY_HALO_HIDE = "halo_hide";
+    private static final String KEY_HALO_REVERSED = "halo_reversed";
 
     private PreferenceScreen mNotificationPulse;
     private PreferenceScreen mBatteryPulse;
     private PreferenceScreen mPieControl;
     private ListPreference mExpandedDesktopPref;
     private CheckBoxPreference mExpandedDesktopNoNavbarPref;
+    private ListPreference mHaloState;
+    private CheckBoxPreference mHaloHide;
+    private CheckBoxPreference mHaloReversed;
 
     private boolean mIsPrimary;
+
+	private Context mContext;
+    private INotificationManager mNotificationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +79,11 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 
         addPreferencesFromResource(R.xml.system_settings);
         PreferenceScreen prefScreen = getPreferenceScreen();
+
+		mContext = getActivity();
+
+		mNotificationManager = INotificationManager.Stub.asInterface(
+        		ServiceManager.getService(Context.NOTIFICATION_SERVICE));
 
         // Only show the hardware keys config on a device that does not have a navbar
         // and the navigation bar config on phones that has a navigation bar
@@ -133,6 +148,18 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
             mPieControl = null;
         }
 
+		mHaloState = (ListPreference) prefScreen.findPreference(KEY_HALO_STATE);
+        mHaloState.setValue(String.valueOf((isHaloPolicyBlack() ? "1" : "0")));
+        mHaloState.setOnPreferenceChangeListener(this);
+
+		mHaloHide = (CheckBoxPreference) prefScreen.findPreference(KEY_HALO_HIDE);
+        mHaloHide.setChecked(Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HALO_HIDE, 0) == 1);
+
+        mHaloReversed = (CheckBoxPreference) prefScreen.findPreference(KEY_HALO_REVERSED);
+        mHaloReversed.setChecked(Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HALO_REVERSED, 1) == 1);
+
         // Expanded desktop
         mExpandedDesktopPref = (ListPreference) findPreference(KEY_EXPANDED_DESKTOP);
         mExpandedDesktopNoNavbarPref = (CheckBoxPreference) findPreference(KEY_EXPANDED_DESKTOP_NO_NAVBAR);
@@ -188,6 +215,14 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
             int expandedDesktopValue = Integer.valueOf((String) objValue);
             updateExpandedDesktop(expandedDesktopValue);
             return true;
+		} else if (preference == mHaloState) {
+            boolean state = Integer.valueOf((String) newValue) == 1;
+            try {
+                mNotificationManager.setHaloPolicyBlack(state);
+            } catch (android.os.RemoteException ex) {
+                // System dead
+            }          
+            return true; 
         } else if (preference == mExpandedDesktopNoNavbarPref) {
             boolean value = (Boolean) objValue;
             updateExpandedDesktop(value ? 2 : 0);
@@ -221,6 +256,33 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
             mPieControl.setSummary(getString(R.string.pie_control_enabled));
         } else {
             mPieControl.setSummary(getString(R.string.pie_control_disabled));
+        }
+    }
+
+	private boolean isHaloPolicyBlack() {
+        try {
+            return mNotificationManager.isHaloPolicyBlack();
+        } catch (android.os.RemoteException ex) {
+                // System dead
+        }
+        return true;
+    } 
+
+    private void updateHaloHideDescription() {
+        if (Settings.System.getInt(getActivity().getContentResolver(),
+                Settings.System.HALO_HIDE, 0) == 1) {
+            mHaloHide.setSummary(getString(R.string.halo_hide_enabled));
+        } else {
+            mHaloHide.setSummary(getString(R.string.halo_hide_disabled));
+        }
+    }
+
+    private void updateHaloInversedDescription() {
+        if (Settings.System.getInt(getActivity().getContentResolver(),
+                Settings.System.HALO_HIDE, 0) == 1) {
+            mHaloHide.setSummary(getString(R.string.halo_hide_enabled));
+        } else {
+            mHaloHide.setSummary(getString(R.string.halo_hide_disabled));
         }
     }
 
