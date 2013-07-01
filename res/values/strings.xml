@@ -4348,6 +4348,8 @@
     <string name="halo_state_summary">For black/white-listing notifications pinging through HALO</string>
     <string name="halo_state_black">Black list</string>
     <string name="halo_state_white">White list</string> 
+	<string name="halo_hide_enabled">Enabled</string>
+	<string name="halo_hide_disabled">Disabled</string>
 
     <!--  Help URLs for some screens. Not specified here. Specified in product overlays --><skip/>
     <!-- Help menu label [CHAR LIMIT=20] -->

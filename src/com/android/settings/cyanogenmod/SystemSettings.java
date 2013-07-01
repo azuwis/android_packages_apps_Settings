@@ -216,7 +216,7 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
             updateExpandedDesktop(expandedDesktopValue);
             return true;
 		} else if (preference == mHaloState) {
-            boolean state = Integer.valueOf((String) newValue) == 1;
+            boolean state = Integer.valueOf((String) objValue) == 1;
             try {
                 mNotificationManager.setHaloPolicyBlack(state);
             } catch (android.os.RemoteException ex) {
