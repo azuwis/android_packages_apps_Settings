@@ -70,7 +70,6 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 
     private boolean mIsPrimary;
 
-	private Context mContext;
     private INotificationManager mNotificationManager;
 
     @Override
@@ -79,8 +78,6 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 
         addPreferencesFromResource(R.xml.system_settings);
         PreferenceScreen prefScreen = getPreferenceScreen();
-
-		mContext = getActivity();
 
 		mNotificationManager = INotificationManager.Stub.asInterface(
         		ServiceManager.getService(Context.NOTIFICATION_SERVICE));
@@ -148,16 +145,16 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
             mPieControl = null;
         }
 
-		mHaloState = (ListPreference) prefScreen.findPreference(KEY_HALO_STATE);
+		mHaloState = (ListPreference) findPreference(KEY_HALO_STATE);
         mHaloState.setValue(String.valueOf((isHaloPolicyBlack() ? "1" : "0")));
         mHaloState.setOnPreferenceChangeListener(this);
 
-		mHaloHide = (CheckBoxPreference) prefScreen.findPreference(KEY_HALO_HIDE);
-        mHaloHide.setChecked(Settings.System.getInt(mContext.getContentResolver(),
+		mHaloHide = (CheckBoxPreference) findPreference(KEY_HALO_HIDE);
+        mHaloHide.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
                 Settings.System.HALO_HIDE, 0) == 1);
 
-        mHaloReversed = (CheckBoxPreference) prefScreen.findPreference(KEY_HALO_REVERSED);
-        mHaloReversed.setChecked(Settings.System.getInt(mContext.getContentResolver(),
+        mHaloReversed = (CheckBoxPreference) findPreference(KEY_HALO_REVERSED);
+        mHaloReversed.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
                 Settings.System.HALO_REVERSED, 1) == 1);
 
         // Expanded desktop
@@ -209,6 +206,18 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
     public void onPause() {
         super.onPause();
     }
+
+	@Override
+	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+		if (preference == mHaloHide) {
+            Settings.System.putInt(getActivity().getContentResolver(),
+				Settings.System.HALO_HIDE, mHaloHide.isChecked() ? 1 : 0);        
+		} else if (preference == mHaloReversed) {
+            Settings.System.putInt(getActivity().getContentResolver(),
+				Settings.System.HALO_REVERSED, mHaloReversed.isChecked() ? 1 : 0);        
+		}
+		return super.onPreferenceTreeClick(preferenceScreen, preference);
+	}
 
     public boolean onPreferenceChange(Preference preference, Object objValue) {
         if (preference == mExpandedDesktopPref) {
