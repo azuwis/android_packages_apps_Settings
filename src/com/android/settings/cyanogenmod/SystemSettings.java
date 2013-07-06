@@ -16,6 +16,7 @@
 
 package com.android.settings.cyanogenmod;
 
+import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
@@ -58,6 +59,7 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 	private static final String KEY_HALO_STATE = "halo_state";
     private static final String KEY_HALO_HIDE = "halo_hide";
     private static final String KEY_HALO_REVERSED = "halo_reversed";
+	private static final String KEY_HALO_PAUSE = "halo_pause";
 
     private PreferenceScreen mNotificationPulse;
     private PreferenceScreen mBatteryPulse;
@@ -67,6 +69,7 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
     private ListPreference mHaloState;
     private CheckBoxPreference mHaloHide;
     private CheckBoxPreference mHaloReversed;
+	private CheckBoxPreference mHaloPause;
 
     private boolean mIsPrimary;
 
@@ -157,6 +160,11 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
         mHaloReversed.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
                 Settings.System.HALO_REVERSED, 1) == 1);
 
+		int isLowRAM = (ActivityManager.isLargeRAM()) ? 0 : 1;
+        mHaloPause = (CheckBoxPreference) findPreference(KEY_HALO_PAUSE);
+        mHaloPause.setChecked(Settings.System.getInt(getActivity().getContentResolver(),
+                Settings.System.HALO_PAUSE, isLowRAM) == 1); 
+
         // Expanded desktop
         mExpandedDesktopPref = (ListPreference) findPreference(KEY_EXPANDED_DESKTOP);
         mExpandedDesktopNoNavbarPref = (CheckBoxPreference) findPreference(KEY_EXPANDED_DESKTOP_NO_NAVBAR);
@@ -215,7 +223,10 @@ public class SystemSettings extends SettingsPreferenceFragment  implements
 		} else if (preference == mHaloReversed) {
             Settings.System.putInt(getActivity().getContentResolver(),
 				Settings.System.HALO_REVERSED, mHaloReversed.isChecked() ? 1 : 0);        
-		}
+		} else if (preference == mHaloPause) {
+            Settings.System.putInt(getActivity().getContentResolver(),
+                Settings.System.HALO_PAUSE, mHaloPause.isChecked() ? 1 : 0);
+        }
 		return super.onPreferenceTreeClick(preferenceScreen, preference);
 	}
 

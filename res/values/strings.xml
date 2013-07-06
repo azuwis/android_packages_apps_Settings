@@ -4350,6 +4350,8 @@
     <string name="halo_state_white">White list</string> 
 	<string name="halo_hide_enabled">Enabled</string>
 	<string name="halo_hide_disabled">Disabled</string>
+	<string name="halo_pause_title">HALO pause active app</string>
+	<string name="halo_pause_summary">When opening an app with HALO the underlying app will get paused (enabled by default on low memory devices)</string>
 
     <!--  Help URLs for some screens. Not specified here. Specified in product overlays --><skip/>
     <!-- Help menu label [CHAR LIMIT=20] -->
