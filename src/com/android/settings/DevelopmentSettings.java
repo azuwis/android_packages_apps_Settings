@@ -107,7 +107,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment
     private static final String HDCP_CHECKING_PROPERTY = "persist.sys.hdcp_checking";
     private static final String ENFORCE_READ_EXTERNAL = "enforce_read_external";
     private static final String UNLOCK_GOOGLE_PLAY = "unlock_google_play";
-    private static final String GOOGLE_PLAY_PKG_NAME = "com.android.vending";
+    private static final String GOOGLE_PLAY_PKG_NAME = "com.google.android.gms";
     private static final String LOCAL_BACKUP_PASSWORD = "local_backup_password";
     private static final String HARDWARE_UI_PROPERTY = "persist.sys.ui.hw";
     private static final String MSAA_PROPERTY = "debug.egl.force_msaa";
