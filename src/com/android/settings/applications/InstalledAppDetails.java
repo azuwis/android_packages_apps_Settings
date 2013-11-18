@@ -342,22 +342,13 @@ public class InstalledAppDetails extends Fragment
     }
 
     private boolean handleDisableable(Button button) {
-        boolean disableable = false;
-        // Try to prevent the user from bricking their phone
-        // by not allowing disabling of apps signed with the
-        // system cert and any launcher app in the system.
-        if (mHomePackages.contains(mAppEntry.info.packageName) || isThisASystemPackage()) {
-            // Disable button for core system applications.
+        if (mAppEntry.info.enabled) {
             button.setText(R.string.disable_text);
-        } else if (mAppEntry.info.enabled) {
-            button.setText(R.string.disable_text);
-            disableable = true;
         } else {
             button.setText(R.string.enable_text);
-            disableable = true;
         }
 
-        return disableable;
+        return true;
     }
 
     private void initUninstallButtons() {
